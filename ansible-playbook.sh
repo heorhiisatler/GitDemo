@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-export USER=$1
-export PASSWORD=$2
+D_USER=$1
+D_PASSWORD=$2
+
+export D_USER
+export D_PASSWORD
 
 ansible-playbook -i hosts remoteplaybook_centos_dhub.yml
 

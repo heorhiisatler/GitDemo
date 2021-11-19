@@ -7,8 +7,8 @@
 
   vars:
     version: v1
-    docker_user: "{{ lookup('env','USER') }}"
-    docker_pwd: "{{ lookup('env','PASSWORD') }}"
+    docker_user: "{{ lookup('env','D_USER') }}"
+    docker_pwd: "{{ lookup('env','D_PASSWORD') }}"
 
   tasks:
     # Довавим репозиторий Docker
@@ -63,7 +63,7 @@
       ignore_errors: True
 
     - name: Log into private registry and force re-authorization
-      command: echo $PASSWORD | docker login -u $USER --password-stdin
+      command: docker login -u {{ docker_user }} -p {{ docker_pwd }}
 
     - name: Run container from Docker Hub
       command: docker run -d -p 9080:8080 --name tomacat-container_1
