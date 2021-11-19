@@ -5,9 +5,7 @@ pipeline {
         maven 'maven-3.8.3'
     }
 
-    environment {
-    }
-   
+  
     stages {
         stage('Build jar') {
             steps {
