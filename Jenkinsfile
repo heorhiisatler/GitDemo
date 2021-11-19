@@ -27,9 +27,16 @@ pipeline {
                 }            
             }
         }
-        stage('Deploy') {
+        stage('Deploy to QA-server') {
             steps {
-                echo "Deploying to centos-vm-qa-0 (on PVE2 node)"             
+                script {
+                    echo "Deploying to centos-vm-qa-0 (on PVE2 node)"
+                    def ansible_cmd = 'ansible-playbook -i hosts remoteplaybook_centos_dhub.yml'
+                    sshagent(['ControlServer']) {
+                        sh "ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}"
+                    }
+                }
+
             }
         }
     }
