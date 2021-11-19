@@ -29,7 +29,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo "Deploy"
+                echo "Deploying to centos-vm-qa-0 (on PVE2 node)"             
             }
         }
     }
