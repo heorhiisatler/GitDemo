@@ -35,7 +35,7 @@ pipeline {
                         echo "Deploying to centos-vm-qa-0 (on PVE2 node)"
                         def ansible_cmd = '. ./ansible-playbook.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
-                            sh "scp ansible-playbook.sh decepticon@192.168.5.12:~"
+                            sh "scp ansible-playbook.sh remoteplaybook_centos_dhub.yml decepticon@192.168.5.12:~"
                             sh "ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}"
                         }
                     }
