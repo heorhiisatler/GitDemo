@@ -1,0 +1,57 @@
+---
+- name: app setup
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  vars:
+    version: v1
+
+  tasks:
+    # Установить два пакета по списку
+    - name: install packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop: 
+        - docker.io
+        - python3-pip
+
+    # Установить модуль для ansible, чтобы управлять docker
+    - name: install pip for docker
+      pip:
+        name: docker
+
+    # Чуть изменить конфиг docker
+    # Если файл изменялся - вызвать handler с именем restart docker (ниже)
+    - name: configure docker
+      copy:
+        content: '{ "userland-proxy": false }'
+        dest: /etc/docker/daemon.json
+      notify: restart docker
+
+    - name: Stop the running container
+      command: docker stop tomacat-container_1
+      ignore_errors: True
+
+    - name: Remove the running container
+      command: docker rm tomacat-container_1
+      ignore_errors: True
+
+    - name: Remove the running image
+      command: docker rmi customimage_1:latest
+      ignore_errors: True
+
+    - name: Log into private registry and force re-authorization
+      command: docker login -u {{ docker_user }} -p {{ docker_pwd }}
+
+    - name: Run container from Docker Hub
+      command: docker run -d -p 9080:8080 --name tomacat-container_1
+          decepticon1984/java-demo:1.0
+
+  handlers:
+    - name: restart docker
+      systemd:
+        name: docker
+        state: restarted
