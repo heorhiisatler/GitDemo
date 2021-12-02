@@ -30,7 +30,7 @@ pipeline {
         }
         stage('Deploy to QA-server on AWS EC2') {
             when {
-                expression { choise == 1 }
+                expression { choise == 'aws' }
             }
             steps {
                 script {
@@ -48,7 +48,7 @@ pipeline {
         }
         stage('Deploy to QA-server on PVE2') {
             when {
-                expression { choise == 2 }
+                expression { choise == 'pve' }
             }
             steps {
                 script {
