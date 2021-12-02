@@ -21,7 +21,7 @@ pipeline {
                     echo "Building the docker image"
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
                         sh 'docker build -t decepticon1984/java-demo:1.0 .'
-                        sh "echo $PASSWORD | docker login -u $USER --password-stdin"
+                        sh 'echo $PASSWORD | docker login -u $USER --password-stdin'
                         sh 'docker push decepticon1984/java-demo:1.0'
                     }
                     
@@ -29,6 +29,9 @@ pipeline {
             }
         }
         stage('Deploy to QA-server on EC2') {
+            when {
+                expression { choise == 1 }
+            }
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
