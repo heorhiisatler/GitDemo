@@ -28,18 +28,36 @@ pipeline {
                 }            
             }
         }
-        stage('Deploy to QA-server on EC2') {
+        stage('Deploy to QA-server on AWS EC2') {
             when {
                 expression { choise == 1 }
             }
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
-                        echo 'Deploying AWS EC2'
+                        echo 'Deploying to AWS EC2'
                         def ansible_cmd = '. ./ansible-playbook.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
-                            sh "scp ansible-playbook.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~"
-                            sh "ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}"
+                            sh 'scp ansible-playbook.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~'
+                            sh 'ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}'
+                        }
+                    }
+                }
+
+            }
+        }
+        stage('Deploy to QA-server on PVE2') {
+            when {
+                expression { choise == 2 }
+            }
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
+                        echo 'Deploying to PVE2'
+                        def ansible_cmd = '. ./ansible-playbook.sh $USER $PASSWORD'
+                        sshagent(['ControlServer']) {
+                            sh 'scp ansible-playbook.sh remoteplaybook_centos_dhub.yml decepticon@192.168.5.12:~'
+                            sh 'ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}'
                         }
                     }
                 }
