@@ -6,5 +6,5 @@ D_PASSWORD=$2
 export D_USER
 export D_PASSWORD
 
-ansible-playbook -i hosts remoteplaybook_centos_dhub
+ansible-playbook -i hosts remoteplaybook_centos_dhub.yml
 
