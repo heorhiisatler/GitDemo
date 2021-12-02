@@ -6,6 +6,8 @@
 
   vars:
     version: v1
+    docker_user: "{{ lookup('env','D_USER') }}"
+    docker_pwd: "{{ lookup('env','D_PASSWORD') }}"
 
   tasks:
     # Установить два пакета по списку
