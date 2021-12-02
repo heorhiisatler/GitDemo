@@ -28,11 +28,11 @@ pipeline {
                 }            
             }
         }
-        stage('Deploy to QA-server') {
+        stage('Deploy to QA-server on EC2') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
-                        echo "Deploying to centos-vm-qa-0 (on PVE2 node)"
+                        echo 'Deploying AWS EC2'
                         def ansible_cmd = '. ./ansible-playbook.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
                             sh "scp ansible-playbook.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~"
