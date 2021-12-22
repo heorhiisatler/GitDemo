@@ -39,7 +39,7 @@ pipeline {
                         def ansible_cmd = '. ./ansible-playbook.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
                             sh 'scp ansible-playbook.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~'
-                            sh 'ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}'
+                            sh "ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}"
                         }
                     }
                 }
