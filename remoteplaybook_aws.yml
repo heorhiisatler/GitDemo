@@ -27,11 +27,11 @@
 
     # Чуть изменить конфиг docker
     # Если файл изменялся - вызвать handler с именем restart docker (ниже)
-    - name: configure docker
-      copy:
-        content: '{ "userland-proxy": false }'
-        dest: /etc/docker/daemon.json
-      notify: restart docker
+    #- name: configure docker
+    #  copy:
+    #    content: '{ "userland-proxy": false }'
+    #    dest: /etc/docker/daemon.json
+      #notify: restart docker
 
     - name: Stop the running container
       command: docker stop tomacat-container_1
@@ -52,8 +52,8 @@
       command: docker run -d -p 9080:8080 --name tomacat-container_1
           decepticon1984/java-demo:1.0
 
-  handlers:
-    - name: restart docker
-      systemd:
-        name: docker
-        state: restarted
+  #handlers:
+  #  - name: restart docker
+  #    systemd:
+  #      name: docker
+  #      state: restarted
