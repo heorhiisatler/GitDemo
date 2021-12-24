@@ -1,6 +1,6 @@
 ---
 - name: app setup
-  hosts: decepticon@192.168.5.33
+  hosts: all
   # force_handlers: true
   gather_facts: no
   become: yes
