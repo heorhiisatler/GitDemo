@@ -1,0 +1,13 @@
+terraform/proxmox/terraform.tfstate
+terraform/proxmox/*.tfvars
+terraform/proxmox/.terraform/*
+terraform/proxmox/terraform.tfstate.backup
+terraform/proxmox/terraform-centos.tfvars
+terraform/aws/.terraform/
+terraform/aws/keys/
+terraform/aws/terraform.tfstate
+terraform/aws/terraform.tfstate.backup
+terraform/aws/.terraform.lock.hcl
+terraform/proxmox/.terraform.lock.hcl
+terraform/proxmox/keys/
+terraform/*.tfvars
