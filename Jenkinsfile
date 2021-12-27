@@ -45,7 +45,7 @@ pipeline {
                             returnStdout: true
                         ).trim()
                         sh "echo ${EC2_PUBLIC_IP}"
-                        // sh "echo ubuntu@${EC2_PUBLIC_IP} > hosts"
+                        sh "echo ubuntu@${EC2_PUBLIC_IP} > ./hosts"
                     }
                 }
 
