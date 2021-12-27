@@ -44,7 +44,7 @@ pipeline {
                             script: 'terraform output ec2_public_ip',
                             returnStdout: true
                         ).trim()
-                        sh 'echo ubuntu@$EC2_PUBLIC_IP > ./hosts'
+                        sh "echo ubuntu@${EC2_PUBLIC_IP} > hosts"
                     }
                 }
 
