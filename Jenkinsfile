@@ -63,7 +63,7 @@ pipeline {
                         echo 'Deploying to AWS EC2'
                         def ansible_cmd = '. ./ansible-playbook-aws.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
-                            sh 'scp hosts ansible-playbook.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~'
+                            sh 'scp hosts ansible-playbook-aws.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~'
                             sh "ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}"
                         }
                     }
@@ -79,9 +79,9 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
                         echo 'Deploying to PVE2'
-                        def ansible_cmd = '. ./ansible-playbook.sh $USER $PASSWORD'
+                        def ansible_cmd = '. ./ansible-playbook-pve.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
-                            sh 'scp ansible-playbook.sh remoteplaybook_centos_dhub.yml decepticon@192.168.5.12:~'
+                            sh 'scp ansible-playbook-pve.sh remoteplaybook_centos_dhub.yml decepticon@192.168.5.12:~'
                             sh "ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}"
                         }
                     }
