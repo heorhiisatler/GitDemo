@@ -1,0 +1,70 @@
+---
+- name: app setup
+  hosts: all
+  # force_handlers: true
+  gather_facts: no
+  become: yes
+
+  vars:
+    version: v1
+    docker_user: "{{ lookup('env','D_USER') }}"
+    docker_pwd: "{{ lookup('env','D_PASSWORD') }}"
+
+  tasks:
+    # Довавим репозиторий Docker
+    - name: Add repository
+      shell: yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
+
+    # Установить два пакета по списку
+    - name: install packages
+      yum:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - python3-pip
+    # Установить модуль для ansible, чтобы управлять docker
+    - name: install pip for docker
+      pip:
+        virtualenv: /tmp/py3
+        virtualenv_command: /usr/bin/env python3 -m venv
+        name: docker
+
+    # Чуть изменить конфиг docker
+    # Если файл изменялся - вызвать handler с именем restart docker (ниже)
+    #- name: configure docker
+    #  copy:
+    #    content: '{ "userland-proxy": false }'
+    #    dest: /etc/docker/daemon.json
+    #  notify: restart docker
+
+    # Развернуть сам контейнер
+    - name: restart docker
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
+        enabled: yes
+
+    - name: Stop the running container
+      command: docker stop tomacat-container_1
+      ignore_errors: True
+
+    - name: Remove the running container
+      command: docker rm tomacat-container_1
+      ignore_errors: True
+
+    - name: Remove the running image
+      command: docker rmi decepticon1984/java-demo:1.0
+      ignore_errors: True
+
+    - name: Log into private registry and force re-authorization
+      command: docker login -u {{ docker_user }} -p {{ docker_pwd }}
+
+    - name: Run container from Docker Hub
+      command: docker run -d -p 9080:8080 --name tomacat-container_1
+          decepticon1984/java-demo:1.0
