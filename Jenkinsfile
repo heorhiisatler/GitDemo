@@ -58,7 +58,7 @@ pipeline {
             steps {
                 script {
                     echo 'Waiting for ec2 instance ready...'
-                    sleep(time: 90, unit: "SECONDS")
+                    // sleep(time: 90, unit: "SECONDS")
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
                         echo 'Deploying to AWS EC2'
                         def ansible_cmd = '. ./ansible-playbook-aws.sh $USER $PASSWORD'
