@@ -37,6 +37,7 @@ pipeline {
             steps {
                 script {
                     dir('terraform') {
+                        sh 'terraform init'
                         sh 'terraform plan'
                         sh 'terraform apply --auto-approve'
                         EC2_PUBLIC_IP = sh(
