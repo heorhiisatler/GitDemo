@@ -40,7 +40,7 @@ pipeline {
                         sh 'terraform plan'
                         sh 'terraform apply --auto-approve'
                         EC2_PUBLIC_IP = sh(
-                            script: 'terraform output ec2_public_ip'
+                            script: 'terraform output ec2_public_ip',
                             returnStdout: true
                         ).trim()
                         sh 'echo ubuntu@$EC2_PUBLIC_IP > ./hosts'
@@ -55,6 +55,8 @@ pipeline {
             }
             steps {
                 script {
+                    echo 'Waiting for ec2 instance ready...'
+                    sleep(time: 90, unit: "SECONDS")
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
                         echo 'Deploying to AWS EC2'
                         def ansible_cmd = '. ./ansible-playbook-aws.sh $USER $PASSWORD'
