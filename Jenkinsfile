@@ -58,6 +58,9 @@ pipeline {
             }
         }
         stage('Deploy to QA-server on AWS EC2') {
+            environment {
+                ANSIBLE_HOST = '192.168.5.12'
+            }
             when {
                 expression { choise == 'aws' }
             }
@@ -69,9 +72,10 @@ pipeline {
                         echo 'Deploying to AWS EC2'
                         // def ansible_cmd = '. ./ansible-playbook-aws.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
+                            // Copy required files to the ansible server and runing playbook 
                             sh '''
-                                scp hosts ansible-playbook-aws.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~
-                                ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 \
+                                scp hosts ansible-playbook-aws.sh remoteplaybook_aws.yml decepticon@ANSIBLE_HOST:~
+                                ssh -o StrictHostKeyChecking=no decepticon@$ANSIBLE_HOST \
                                 . ./ansible-playbook-aws.sh $USER $PASSWORD
                             '''
                         }
@@ -90,8 +94,8 @@ pipeline {
                         echo 'Deploying to PVE2'
                         def ansible_cmd = '. ./ansible-playbook-pve.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
-                            sh 'scp ansible-playbook-pve.sh remoteplaybook_centos_dhub.yml decepticon@192.168.5.12:~'
-                            sh "ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}"
+                            sh 'scp ansible-playbook-pve.sh remoteplaybook_centos_dhub.yml decepticon@$ANSIBLE_HOST:~'
+                            sh "ssh -o StrictHostKeyChecking=no decepticon@$ANSIBLE_HOST ${ansible_cmd}"
                         }
                     }
                 }
