@@ -20,9 +20,11 @@ pipeline {
                 script {
                     echo "Building the docker image"
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker build -t decepticon1984/java-demo:1.0 .'
-                        sh 'echo $PASSWORD | docker login -u $USER --password-stdin'
-                        sh 'docker push decepticon1984/java-demo:1.0'
+                        sh '''
+                            docker build -t decepticon1984/java-demo:1.0 .
+                            echo $PASSWORD | docker login -u $USER --password-stdin
+                            docker push decepticon1984/java-demo:1.0
+                        '''
                     }
                     
                 }            
@@ -37,15 +39,19 @@ pipeline {
             steps {
                 script {
                     dir('terraform') {
-                        sh 'terraform init'
-                        sh 'terraform plan'
-                        sh 'terraform apply --auto-approve'
+                        sh '''
+                            terraform init
+                            terraform plan
+                            terraform apply --auto-approve
+                        '''
                         EC2_PUBLIC_IP = sh(
                             script: "terraform output -json ec2_public_ip | jq -r '.[0]'",
                             returnStdout: true
                         ).trim()
-                        sh "echo ${EC2_PUBLIC_IP}"
-                        sh "echo ubuntu@${EC2_PUBLIC_IP} > ../hosts"
+                        sh """
+                            echo ${EC2_PUBLIC_IP}
+                            echo ubuntu@${EC2_PUBLIC_IP} > ../hosts
+                        """
                     }
                 }
 
@@ -61,10 +67,13 @@ pipeline {
                     // sleep(time: 90, unit: "SECONDS")
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
                         echo 'Deploying to AWS EC2'
-                        def ansible_cmd = '. ./ansible-playbook-aws.sh $USER $PASSWORD'
+                        // def ansible_cmd = '. ./ansible-playbook-aws.sh $USER $PASSWORD'
                         sshagent(['ControlServer']) {
-                            sh 'scp hosts ansible-playbook-aws.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~'
-                            sh "ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 ${ansible_cmd}"
+                            sh '''
+                                scp hosts ansible-playbook-aws.sh remoteplaybook_aws.yml decepticon@192.168.5.12:~
+                                ssh -o StrictHostKeyChecking=no decepticon@192.168.5.12 \
+                                . ./ansible-playbook-aws.sh $USER $PASSWORD
+                            '''
                         }
                     }
                 }
