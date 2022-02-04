@@ -36,6 +36,9 @@ pipeline {
                 AWS_SECRET_ACCESS_KEY = credentials('jenkins_aws_secret_access_key')
                 TF_VAR_env_prefix = 'test'
             }
+            when {
+                expression { choise == 'aws' }
+            }
             steps {
                 script {
                     dir('terraform') {
