@@ -77,7 +77,7 @@ pipeline {
                         sshagent(['ControlServer']) {
                             // Copy required files to the ansible server and runing playbook 
                             sh '''
-                                scp hosts ansible-playbook-aws.sh remoteplaybook_aws.yml decepticon@ANSIBLE_HOST:~
+                                scp hosts ansible-playbook-aws.sh remoteplaybook_aws.yml decepticon@$ANSIBLE_HOST:~
                                 ssh -o StrictHostKeyChecking=no decepticon@$ANSIBLE_HOST \
                                 . ./ansible-playbook-aws.sh $USER $PASSWORD
                             '''
